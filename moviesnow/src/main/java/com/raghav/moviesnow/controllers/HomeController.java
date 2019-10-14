@@ -19,6 +19,8 @@ import com.raghav.moviesnow.models.*;
 import com.raghav.moviesnow.hash.Hashor;
 
 import javax.servlet.http.HttpSession;
+
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -36,12 +38,28 @@ public class HomeController {
     @Autowired
     private Feeddao feeddao;
 
+    @Autowired
+    private Slotdao slotdao;
+
+    @Autowired
+    private Bookingdao bookdao;
+
+    @Autowired
+    private Transdao transdao;
+
     @GetMapping("/")
-    public String index(HttpSession session, Model model) {
+    public String index(HttpSession session, Model model, @RequestParam(value="msearch",required=false) String searchstr) {
 
         Object lflag=session.getAttribute("login_flag");
         if( lflag == null)  session.setAttribute("login_flag", 0);
-        List<Movie> mvtmp = moviedao.getall();
+        List<Movie> mvtmp = null;
+
+        if(searchstr==null)
+            mvtmp = moviedao.getall();
+        else{
+
+            mvtmp = moviedao.getMatch(searchstr.toUpperCase());
+        }
         for(int i=0;i<mvtmp.size();i++){
 
             mvtmp.get(i).setTags(movietagdao.getall(mvtmp.get(i).getId()));
@@ -323,5 +341,96 @@ public class HomeController {
         model.addAttribute("all_feed", ls);
 
         return "feed";
+    }
+
+    @GetMapping("/screening/{movie_id}")
+    public String screen(HttpSession session, Model model, @PathVariable("movie_id") int movie_id) {
+
+        Movie currmv = moviedao.getObj(movie_id);
+        model.addAttribute("movie_id", movie_id);
+        model.addAttribute("movie_name", currmv.getName());
+
+        List<Slot> all_slots = slotdao.getall(movie_id);
+        model.addAttribute("all_slots", all_slots);
+        return "screening";
+    }
+
+    @GetMapping("/addslot")
+    public String addslot(HttpSession session, Model model) {
+
+        List<Movie> all_movie = moviedao.getall();
+        model.addAttribute("all_movie", all_movie);
+        return "addslot";
+    }
+
+    @PostMapping("/addslot")
+    public String addslotpost(HttpSession session, Model model, @RequestParam("movie_id") int movie_id,
+    @RequestParam("start_hour") int shour, @RequestParam("start_min") int smin, @RequestParam("audi_num") int audi_num) {
+
+        Slot newslot = new Slot();
+
+        newslot.setAudi_num(audi_num);
+        newslot.setStart_hour(shour);
+        newslot.setStart_min(smin);
+        newslot.setMovie(moviedao.getObj(movie_id));
+        newslot.setDate(new Date());
+
+        slotdao.save(newslot);
+        return "redirect:/";
+    }
+
+    @GetMapping("/mybookings")
+    public String bookings(HttpSession session, Model model) {
+
+        return "mybook";
+    }
+
+    @GetMapping("/book/{slot_id}")
+    public String booknow(HttpSession session, Model model, @PathVariable("slot_id") int slot_id) {
+
+        List<Booking> ls = bookdao.getObj(slot_id);
+        model.addAttribute("slot_id", slot_id);
+        model.addAttribute("all_book", ls);
+
+        return "ticketing";
+    }
+
+    @GetMapping("/book/trans")
+    public String finalise(HttpSession session, Model model, @RequestParam("slot_id") int slot_id, @RequestParam("seats") String seats) {
+
+        String [] allseats = seats.split(",", 0);
+        int count = allseats.length;
+        model.addAttribute("count", count);
+        model.addAttribute("cost", count*500);
+        model.addAttribute("slot_id", slot_id);
+        model.addAttribute("seats", seats);
+        return "payment";
+    }
+
+    @PostMapping("/book/final")
+    public String finalpay(HttpSession session, Model model, @RequestParam("slot_id") int slot_id, @RequestParam("seats") String seats
+    , @RequestParam("cost") int cost, @RequestParam("paymode") String paymode) {
+
+        Transaction newt = new Transaction();
+
+        newt.setAmt(cost);
+        newt.setPay_mode(paymode);
+        newt.setDate(new Date());
+        transdao.save(newt);
+
+        String [] allseats = seats.split(",", 0);
+
+        for(String tmp:allseats){
+
+            int st = Integer.parseInt(tmp);
+            Booking newb = new Booking();
+            newb.setSeat_no(st);
+            newb.setTransaction(newt);
+            newb.setProfile(profiledao.getprofile((String)session.getAttribute("user_email")));
+            newb.setSlot(slotdao.getbySlotid(slot_id));
+            bookdao.save(newb);
+        }
+
+        return "redirect:/";
     }
 }

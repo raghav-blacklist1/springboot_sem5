@@ -12,8 +12,17 @@ public class Slot{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int slot_id;
 
-    private int start_time;
-    private int end_time;
+    public int getSlot_id() {
+        return this.slot_id;
+    }
+
+    public void setSlot_id(int slot_id) {
+        this.slot_id = slot_id;
+    }
+
+    private int start_hour;
+
+    private int start_min;
     private Date date;
     private int audi_num;
 
@@ -25,20 +34,20 @@ public class Slot{
         this.audi_num = audi_num;
     }
 
-    public int getStart_time() {
-        return this.start_time;
+    public int getStart_hour() {
+        return this.start_hour;
     }
 
-    public void setStart_time(int start_time) {
-        this.start_time = start_time;
+    public void setStart_hour(int start_hour) {
+        this.start_hour = start_hour;
     }
 
-    public int getEnd_time() {
-        return this.end_time;
+    public int getStart_min() {
+        return this.start_min;
     }
 
-    public void setEnd_time(int end_time) {
-        this.end_time = end_time;
+    public void setStart_min(int start_min) {
+        this.start_min = start_min;
     }
 
     public Date getDate() {
@@ -53,4 +62,12 @@ public class Slot{
     @JoinColumn(name = "movie_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Movie movie;
+
+    public Movie getMovie() {
+        return this.movie;
+    }
+
+    public void setMovie(Movie movie) {
+        this.movie = movie;
+    }
 }

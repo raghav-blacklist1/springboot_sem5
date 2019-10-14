@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Booking Payment Page</title>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/ui-darkness/jquery-ui.css"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="../static/css/site.css"/>
+    <title>Add Movie Slot</title>
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/ui-darkness/jquery-ui.css"/>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
 </head>
 <style>
     body {
@@ -27,7 +27,8 @@ footer{
   align-items: stretch;
 }
 
-.card {
+.movie-card .card{
+
     flex: 1 1 auto;
 }
 
@@ -120,35 +121,29 @@ ul li {
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="#">
-                    <span style="font-family:cursive;display:inline-block;color:yellow">MoviesNow</span>
-                </a>
+                    <a class="navbar-brand" href="#">
+                            <span style="font-family:cursive;display:inline-block;color:yellow">MoviesNow</span>
+                    </a>
             </div>
             <ul class="nav navbar-nav">
-                <li><a href="/">Back to Movies</a></li>
+                <li><a href="/">Movies</a></li>
             </ul>
         </div>
     </nav>
     <div class="container">
-        <h1>Booking ${count} seats</h1>
-        <form method="post" action="/book/final" class="form-signin">
+        <h2>Create new Slot</h2>
+        <form action="/addslot" method="post" class="form-signin">
             <div class="form-group">
-               <fieldset>
-                  <legend>Payment options</legend>
-                  <p>
-                     <label>Select payment mode</label>
-                     <select input type="text" name="paymode">
-                       <option value = "credit">Credit Card</option>
-                       <option value = "debit">Debit Card</option>
-                       <option value = "paytm">PayTM</option>
-                       <option value = "upi">UPI</option>
-                     </select>
-                  </p>
-               </fieldset>
-               <input type="hidden" name="slot_id" value="${slot_id}">
-               <input type="hidden" name="seats" value="${seats}">
-               <input type="hidden" name="cost" value="${cost}">
-               <button class="btn btn-lg btn-primary btn-block" type="submit">Pay Rs.${cost}</button>
+                <label>Select movie:    </label>
+                <select input type="text" name="movie_id">
+                    <c:forEach items="${all_movie}" var="movie">
+                    <option value = "${movie.id}">${movie.name}</option>
+                    </c:forEach>
+                </select>
+                <input name="start_hour" type="number" class="form-control" min="0" max="23"placeholder="Enter hour(HH)"/>
+                <input name="start_min" type="number" class="form-control" min="0" max="59" placeholder="Enter minute(MM)"/>
+                <input name="audi_num" type="number" class="form-control" min="1" max="4" placeholder="Enter Audi number(between 1 to 4)"/>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Add Movie</button>
             </div>
         </form>
     </div>
@@ -158,6 +153,5 @@ ul li {
     <script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="js/site.js"></script>
 </body>
 </html>

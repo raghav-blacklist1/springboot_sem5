@@ -226,7 +226,7 @@ ul li {
             <label>
               <input type="radio" name="stars" value="2" />
               <span class="icon"><i class="fa fa-star" aria-hidden="true"></i></span>
-              <span class="icon"></span>
+              <span class="icon"><i class="fa fa-star" aria-hidden="true"></i></span>
             </label>
             <label>
               <input type="radio" name="stars" value="3" />

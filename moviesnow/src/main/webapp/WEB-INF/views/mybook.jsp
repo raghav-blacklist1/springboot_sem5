@@ -125,7 +125,7 @@ ul li {
                 </a>
             </div>
             <ul class="nav navbar-nav">
-                <li><a href="/movies">Back to Movies</a></li>
+                <li><a href="/">Back to Movies</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 

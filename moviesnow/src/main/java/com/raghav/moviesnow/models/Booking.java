@@ -36,5 +36,35 @@ public class Booking{
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Transaction transaction;
 
+    public int getBooking_id() {
+        return this.booking_id;
+    }
 
+    public void setBooking_id(int booking_id) {
+        this.booking_id = booking_id;
+    }
+
+    public Profile getProfile() {
+        return this.profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    public Slot getSlot() {
+        return this.slot;
+    }
+
+    public void setSlot(Slot slot) {
+        this.slot = slot;
+    }
+
+    public Transaction getTransaction() {
+        return this.transaction;
+    }
+
+    public void setTransaction(Transaction transaction) {
+        this.transaction = transaction;
+    }
 }

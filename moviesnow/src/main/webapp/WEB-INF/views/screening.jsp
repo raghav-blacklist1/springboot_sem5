@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -125,7 +126,7 @@ ul li {
                 </a>
             </div>
             <ul class="nav navbar-nav">
-                <li><a href="/movies">Back to Movies</a></li>
+                <li><a href="/">Back to Movies</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a>Welcome, ${user_name} </a></li>
@@ -136,34 +137,29 @@ ul li {
         </div>
     </nav>
     <div class="container movie-details">
-        <h4> Movie Name Here </h4>
+        <h4> ${movie_name} </h4>
     </div>
     <div class="container">
         <ul class="movie-dates">
             <li></li>
         </ul>
     </div>
-    <div class="container" th:each="screening:${screenings}">
+    <div class="container">
         <table class="table">
             <tbody>
+                <c:forEach items="${all_slots}" var="slot">
                 <tr>
-                    <td class="col-md-4"> 10:30 </td>
-                    <td><a class="btn btn-primary btn-sm" role="button" tabindex="0" data-toggle="popover" title="Number of Seats"
+                    
+                    <td class="col-md-4"><strong> AUDI ${slot.audi_num}</strong> </td>
+                    <td class="col-md-4">Time: ${slot.start_hour}: ${slot.start_min}</td>
+                    <td><a class="btn btn-primary btn-sm" href="/book/${slot.slot_id}" role="button" tabindex="0" data-toggle="popover" title="Go to Seat Selection"
                            data-trigger="focus"
                            >
-                        Book Tickets!
+                        Go to seat selection.
                         </a>
                     </td>
                 </tr>
-                <tr>
-                    <td class="col-md-4"> 16:50</td>
-                    <td><a class="btn btn-primary btn-sm" role="button" tabindex="0" data-toggle="popover" title="Number of Seats"
-                           data-trigger="focus"
-                           >
-                        Book Tickets!
-                        </a>
-                    </td>
-                </tr>
+                </c:forEach>
             </tbody>
         </table>
     </div>

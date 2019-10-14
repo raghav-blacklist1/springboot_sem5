@@ -119,65 +119,24 @@ ul li {
 }
 </style>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">
-                    <span style="font-family:cursive;display:inline-block;color:yellow">MoviesNow</span>
-                </a>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        <span style="font-family:cursive;display:inline-block;color:yellow">MoviesNow</span>
+                    </a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Back to Movies</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    
+                    <li class="nav-item">
+                        <a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+                    </li>
+                </ul>
             </div>
-            <ul class="nav navbar-nav">
-                <li><a href="/">Movies</a></li>
-                <%
-                int flag = (int)session.getAttribute("login_flag");
-                if(flag == 0)  {
-                %> 
-                <li><a href="/register">Register</a></li>
-                <%
-                }
-                %>
-                <%
-                if(flag!=0){
-
-                    int priv = (int)session.getAttribute("priv_lvl");
-                %>
-                <li><a href="/mybookings">My Bookings</a></li>
-                <%
-                    if(priv == 2)  {
-                %> 
-                <li><a href="/addmovie">Add Movie</a></li>
-                <li><a href="/addslot">Add Slot</a></li>
-                <li><a href="/admins">Admins</a></li>
-                <%
-                    }      
-                }
-                %>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-
-                <%
-                    int is_logged = (int)session.getAttribute("login_flag");
-                    if(is_logged==0)  {
-                %> 
-
-                <li class="nav-item">
-                    <a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
-                </li>
-
-                <%
-                    } else {
-                %>
-
-                <li><a>Welcome, ${user_name} </a></li>
-                <li class="nav-item">
-                    <a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
-                </li>
-                <%
-                    }
-                %>
-            </ul>
-        </div>
-    </nav>
+        </nav>
 
     <%
         String message = (String)session.getAttribute("message");
@@ -196,39 +155,27 @@ ul li {
     session.setAttribute("message",null);       
     }
     %>
+
+    <div>
+        <div class="container main-content">
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-info">
+                    <h5>Seats already booked: 
+                            <c:forEach items="${all_book}" var="book"> ${book.seat_no} </c:forEach>
+                    </h5>
+                </li>
+            </ul>
+        </div>
+    </div>
     
     <div class="container">
-            <form name="myform" action="/" method="GET">
+            <form name="myform" action="/book/trans/" method="GET">
             <div class="input-group">
-                    <input type="text" name="msearch" placeholder="Search" class="form-control" aria-describedby="basic-addon1"/>
+                    <input type="hidden" name="slot_id" value="${slot_id}">
+                    <input type="text" name="seats" placeholder="Enter seat numbers to book(comma-separated)" class="form-control" aria-describedby="basic-addon1"/>
                     <span class="input-group-addon" id="basic-addon1"><span onclick="myform.submit()" class="glyphicon glyphicon-search" aria-hidden="true"></span></span>
             </div>
             </form>
-        <h3>Movies</h3>
-        <div class="movie-cards">
-            <c:forEach items="${movies_all}" var="movie">
-            <div class="movie-card">
-                <div class="col-sm-12">
-                    <a style="color: black;" href="/feeds/${movie.id}">
-                    <h5 style="font-weight:600" class="card">${movie.name}</h5>
-                    <h6 style="font-weight:300" class="card"><c:forEach items="${movie.tags}" var="tag">${tag.tag_name}, </c:forEach></h6>
-                    </a>
-                    <button class="btn btn-primary btn-sm btn-block" onclick="location.href = '/screening/${movie.id}' ">Book</button>
-                    <%
-                        if(flag!=0){
-
-                            int priv = (int)session.getAttribute("priv_lvl");
-                            if(priv == 2)  {
-                    %> 
-                    <a href="/admin/deletemov/${movie.id}" style="font-size: 12px;"><i class="fa fa-remove" style="color:red"></i> Delete this movie</a>
-                    <%                    
-                            }
-                        }
-                    %> 
-                </div>
-            </div>
-            </c:forEach>
-        </div>
     </div>
     <footer class="footer navbar-inverse navbar-fixed-bottom">
     </footer>
