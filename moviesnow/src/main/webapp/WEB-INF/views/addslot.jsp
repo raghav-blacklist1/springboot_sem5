@@ -143,7 +143,7 @@ ul li {
                 <input name="start_hour" type="number" class="form-control" min="0" max="23"placeholder="Enter hour(HH)"/>
                 <input name="start_min" type="number" class="form-control" min="0" max="59" placeholder="Enter minute(MM)"/>
                 <input name="audi_num" type="number" class="form-control" min="1" max="4" placeholder="Enter Audi number(between 1 to 4)"/>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Add Movie</button>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Add Slot</button>
             </div>
         </form>
     </div>

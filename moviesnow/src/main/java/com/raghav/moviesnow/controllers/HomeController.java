@@ -568,7 +568,7 @@ public class HomeController {
             bookdao.save(newb);
         }
 
-        return "redirect:/";
+        return "redirect:/mybookings";
     }
 
     @GetMapping("/book/cancel/{book_id}")

@@ -156,6 +156,9 @@ ul li {
                         Cancel
                         </a>
                     </td>
+                    <td><a href="/addfeedback/${book.slot.movie.id}" style="background-color: red; border-color: red;" class="btn btn-primary btn-sm" role="button">
+                        Write Review
+                        </a></td>
                 </tr>
                 </c:forEach>
             </tbody>
