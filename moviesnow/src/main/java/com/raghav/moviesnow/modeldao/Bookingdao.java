@@ -12,4 +12,10 @@ public interface Bookingdao extends CrudRepository<Booking, Integer> {
   
     @Query("SELECT b FROM Booking b where slot_id = :inp")
     public List<Booking> getObj(@Param("inp") int inp);
+
+    @Query("SELECT b FROM Booking b where profile_id = :inp")
+    public List<Booking> getObjbyProf(@Param("inp") int inp);
+
+    @Query("SELECT CASE WHEN count(booking_id) > 0 THEN true ELSE false END FROM Booking where seat_no = :sno and slot_id = :sid")
+    public boolean detects(@Param("sid") int sid, @Param("sno") int seatno);
 }

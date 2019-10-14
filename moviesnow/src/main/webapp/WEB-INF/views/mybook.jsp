@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -141,29 +142,22 @@ ul li {
     <div class="container">
 
     </div>
-    <div class="container" th:each="screening:${screenings}">
+    <div class="container">
         <table class="table">
             <tbody>
+                    <c:forEach items="${all_books}" var="book">
                 <tr>
-                    <td class="col-md-4"> <strong>Shawshank Redemption </td>
-                    <td class="col-md-4"> 10:30 </td>
-                    <td><a class="btn btn-primary btn-sm" role="button" tabindex="0" data-toggle="popover" title="Number of Seats"
+                    <td class="col-md-3"> <strong>${book.slot.movie.name}</td>
+                    <td class="col-md-3">AUDI: ${book.slot.audi_num}, TIME: ${book.slot.hh}:${book.slot.mm} </td>
+                    <td class="col-md-3">SEAT NO: ${book.seat_no} </td>
+                    <td><a href="/book/cancel/${book.booking_id}" class="btn btn-primary btn-sm" role="button" tabindex="0" data-toggle="popover" title="Number of Seats"
                            data-trigger="focus"
                            >
                         Cancel
                         </a>
                     </td>
                 </tr>
-                <tr>
-                    <td class="col-md-4"> <strong>Kimi no na Wa </td>
-                    <td class="col-md-4"> 16:50</td>
-                    <td><a class="btn btn-primary btn-sm" role="button" tabindex="0" data-toggle="popover" title="Number of Seats"
-                           data-trigger="focus"
-                           >
-                        Cancel
-                        </a>
-                    </td>
-                </tr>
+                </c:forEach>
             </tbody>
         </table>
     </div>

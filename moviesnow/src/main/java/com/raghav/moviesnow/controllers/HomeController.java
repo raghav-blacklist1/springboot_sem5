@@ -302,6 +302,13 @@ public class HomeController {
     @GetMapping("/addfeedback/{movie_id}")
     public String addfeed(HttpSession session, Model model, @PathVariable("movie_id") int movie_id) {
 
+        int lflag=(int)session.getAttribute("login_flag");
+        if( lflag == 0 ){
+
+            session.setAttribute("message", "You are not logged in");
+            return "redirect:/";
+        }
+
         model.addAttribute("movie_id", movie_id);
         return "addfeed";
     }
@@ -309,6 +316,13 @@ public class HomeController {
     @PostMapping("/addfeedback")
     public String addfeedpost(HttpSession session, Model model, @RequestParam("stars") int stars,
     @RequestParam("descr") String descr, @RequestParam("movie_id") int movie_id) {
+
+        int lflag=(int)session.getAttribute("login_flag");
+        if( lflag == 0 ){
+
+            session.setAttribute("message", "You are not logged in");
+            return "redirect:/";
+        }
 
         Feedback newfeed = new Feedback();
         newfeed.setComments(descr);
@@ -323,6 +337,7 @@ public class HomeController {
 
     @GetMapping("/feeds/{movie_id}")
     public String showfeed(HttpSession session, Model model, @PathVariable("movie_id") int movie_id) {
+
 
         if(!moviedao.existsById(movie_id)){
 
@@ -346,17 +361,44 @@ public class HomeController {
     @GetMapping("/screening/{movie_id}")
     public String screen(HttpSession session, Model model, @PathVariable("movie_id") int movie_id) {
 
+        int lflag=(int)session.getAttribute("login_flag");
+        if( lflag == 0 ){
+
+            session.setAttribute("message", "You are not logged in");
+            return "redirect:/";
+        }
         Movie currmv = moviedao.getObj(movie_id);
         model.addAttribute("movie_id", movie_id);
         model.addAttribute("movie_name", currmv.getName());
 
         List<Slot> all_slots = slotdao.getall(movie_id);
+
+        for(int i=0;i<all_slots.size();i++){
+
+            all_slots.get(i).setHh(String.format("%02d", all_slots.get(i).getStart_hour()));
+            all_slots.get(i).setMm(String.format("%02d", all_slots.get(i).getStart_min()));
+        }
         model.addAttribute("all_slots", all_slots);
         return "screening";
     }
 
     @GetMapping("/addslot")
     public String addslot(HttpSession session, Model model) {
+
+        int lflag=(int)session.getAttribute("login_flag");
+        if( lflag == 0 ){
+
+            session.setAttribute("message", "You are not logged in");
+            return "redirect:/";
+        }
+
+        int priv=(int)session.getAttribute("priv_lvl");
+
+        if( priv != 2 ){
+
+            session.setAttribute("message", "You do not have access to this page");
+            return "redirect:/";
+        }
 
         List<Movie> all_movie = moviedao.getall();
         model.addAttribute("all_movie", all_movie);
@@ -366,6 +408,21 @@ public class HomeController {
     @PostMapping("/addslot")
     public String addslotpost(HttpSession session, Model model, @RequestParam("movie_id") int movie_id,
     @RequestParam("start_hour") int shour, @RequestParam("start_min") int smin, @RequestParam("audi_num") int audi_num) {
+
+        int lflag=(int)session.getAttribute("login_flag");
+        if( lflag == 0 ){
+
+            session.setAttribute("message", "You are not logged in");
+            return "redirect:/";
+        }
+
+        int priv=(int)session.getAttribute("priv_lvl");
+
+        if( priv != 2 ){
+
+            session.setAttribute("message", "You do not have access to this page");
+            return "redirect:/";
+        }
 
         Slot newslot = new Slot();
 
@@ -382,11 +439,37 @@ public class HomeController {
     @GetMapping("/mybookings")
     public String bookings(HttpSession session, Model model) {
 
+        int lflag=(int)session.getAttribute("login_flag");
+        if( lflag == 0 ){
+
+            session.setAttribute("message", "You are not logged in");
+            return "redirect:/";
+        }
+
+        List<Booking> all_books = bookdao.getObjbyProf(profiledao.getprofile((String)session.getAttribute("user_email")).getId());
+
+        for(int i=0;i<all_books.size();i++){
+
+            all_books.get(i).setSlot(slotdao.getbySlotid(all_books.get(i).getSlot().getSlot_id()));
+            all_books.get(i).getSlot().setMovie(moviedao.getObj(all_books.get(i).getSlot().getMovie().getId()));
+            all_books.get(i).getSlot().setHh(String.format("%02d", all_books.get(i).getSlot().getStart_hour()));
+            all_books.get(i).getSlot().setMm(String.format("%02d", all_books.get(i).getSlot().getStart_min()));
+        }
+
+        model.addAttribute("all_books", all_books);
+
         return "mybook";
     }
 
     @GetMapping("/book/{slot_id}")
     public String booknow(HttpSession session, Model model, @PathVariable("slot_id") int slot_id) {
+
+        int lflag=(int)session.getAttribute("login_flag");
+        if( lflag == 0 ){
+
+            session.setAttribute("message", "You are not logged in");
+            return "redirect:/";
+        }
 
         List<Booking> ls = bookdao.getObj(slot_id);
         model.addAttribute("slot_id", slot_id);
@@ -398,8 +481,56 @@ public class HomeController {
     @GetMapping("/book/trans")
     public String finalise(HttpSession session, Model model, @RequestParam("slot_id") int slot_id, @RequestParam("seats") String seats) {
 
+        int lflag=(int)session.getAttribute("login_flag");
+        if( lflag == 0 ){
+
+            session.setAttribute("message", "You are not logged in");
+            return "redirect:/";
+        }
+
         String [] allseats = seats.split(",", 0);
         int count = allseats.length;
+
+        int flag=1;
+        int flag1=1;
+
+        for(String tmp:allseats){
+
+            int st;
+            try {
+                
+                st = Integer.parseInt(tmp);
+            }
+             catch (Exception e) {
+                
+                session.setAttribute("message", "Invalid Input");
+                return "redirect:/book/" + slot_id;
+            }
+
+            if(st<1 || st>50){
+
+                flag1=0;
+                break;
+            }
+            if(bookdao.detects(slot_id, st)){
+
+                flag=0;
+                break;
+            }
+        }
+
+        if(flag1 == 0){
+
+            session.setAttribute("message", "At least one seat you entered was out of range[1-50]");
+            return "redirect:/book/" + slot_id;
+        }
+
+        if(flag == 0){
+
+            session.setAttribute("message", "At least one seat you entered has been already booked");
+            return "redirect:/book/" + slot_id;
+        }
+
         model.addAttribute("count", count);
         model.addAttribute("cost", count*500);
         model.addAttribute("slot_id", slot_id);
@@ -411,14 +542,20 @@ public class HomeController {
     public String finalpay(HttpSession session, Model model, @RequestParam("slot_id") int slot_id, @RequestParam("seats") String seats
     , @RequestParam("cost") int cost, @RequestParam("paymode") String paymode) {
 
+        int lflag=(int)session.getAttribute("login_flag");
+        if( lflag == 0 ){
+
+            session.setAttribute("message", "You are not logged in");
+            return "redirect:/";
+        }
         Transaction newt = new Transaction();
+
+        String [] allseats = seats.split(",", 0);
 
         newt.setAmt(cost);
         newt.setPay_mode(paymode);
         newt.setDate(new Date());
         transdao.save(newt);
-
-        String [] allseats = seats.split(",", 0);
 
         for(String tmp:allseats){
 
@@ -432,5 +569,19 @@ public class HomeController {
         }
 
         return "redirect:/";
+    }
+
+    @GetMapping("/book/cancel/{book_id}")
+    public String cancelnow(HttpSession session, Model model, @PathVariable("book_id") int book_id) {
+
+        int lflag=(int)session.getAttribute("login_flag");
+        if( lflag == 0 ){
+
+            session.setAttribute("message", "You are not logged in");
+            return "redirect:/";
+        }
+
+        bookdao.deleteById(book_id);
+        return "redirect:/mybookings";
     }
 }

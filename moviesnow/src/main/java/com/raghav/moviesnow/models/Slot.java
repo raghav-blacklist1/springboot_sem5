@@ -70,4 +70,26 @@ public class Slot{
     public void setMovie(Movie movie) {
         this.movie = movie;
     }
+
+    @Transient
+    public String hh;
+
+    @Transient
+    public String mm;
+
+    public String getHh() {
+        return this.hh;
+    }
+
+    public void setHh(String hh) {
+        this.hh = hh;
+    }
+
+    public String getMm() {
+        return this.mm;
+    }
+
+    public void setMm(String mm) {
+        this.mm = mm;
+    }
 }

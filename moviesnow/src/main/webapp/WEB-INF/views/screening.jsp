@@ -151,7 +151,7 @@ ul li {
                 <tr>
                     
                     <td class="col-md-4"><strong> AUDI ${slot.audi_num}</strong> </td>
-                    <td class="col-md-4">Time: ${slot.start_hour}: ${slot.start_min}</td>
+                    <td class="col-md-4">Time: ${slot.hh}:${slot.mm}</td>
                     <td><a class="btn btn-primary btn-sm" href="/book/${slot.slot_id}" role="button" tabindex="0" data-toggle="popover" title="Go to Seat Selection"
                            data-trigger="focus"
                            >
