@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Movie Reservations</title>
+    <title>All Reviews for ${movie_name}</title>
     <link rel="shortcut icon" type="image/x-icon" href="images/movie-projector-icon.png" />
-    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/ui-darkness/jquery-ui.css"/>
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/ui-darkness/jquery-ui.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <style>
@@ -127,50 +127,13 @@ ul li {
                 </a>
             </div>
             <ul class="nav navbar-nav">
-                <li><a href="#">Movies</a></li>
-                <%
-                int flag = (int)session.getAttribute("login_flag");
-                if(flag == 0)  {
-                %> 
-                <li><a href="/register">Register</a></li>
-                <%
-                }
-                %>
-                <%
-                if(flag!=0){
-
-                    int priv = (int)session.getAttribute("priv_lvl");
-                    if(priv == 2)  {
-                %> 
-                <li><a href="/addmovie">Add Movie</a></li>
-                <li><a href="/admins">Admins</a></li>
-                <%
-                    }   
-                }
-                %>
+                <li><a href="/">Back to Movies</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-
-                <%
-                    int is_logged = (int)session.getAttribute("login_flag");
-                    if(is_logged==0)  {
-                %> 
-
-                <li class="nav-item">
-                    <a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
-                </li>
-
-                <%
-                    } else {
-                %>
-
-                <li><a>Welcome, ${user_name} </a></li>
+                
                 <li class="nav-item">
                     <a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
                 </li>
-                <%
-                    }
-                %>
             </ul>
         </div>
     </nav>
@@ -192,37 +155,59 @@ ul li {
     session.setAttribute("message",null);       
     }
     %>
-    
-    <div class="container">
-        <h3>Movies</h3>
-        <div class="movie-cards">
-            <c:forEach items="${movies_all}" var="movie">
-            <div class="movie-card">
-                <div class="col-sm-12">
-                    <a style="color: black;" href="/feeds/${movie.id}">
-                    <h5 style="font-weight:600" class="card">${movie.name}</h5>
-                    <h6 style="font-weight:300" class="card"><c:forEach items="${movie.tags}" var="tag">${tag.tag_name}, </c:forEach></h6>
-                    </a>
-                    <button class="btn btn-primary btn-sm btn-block">Book</button>
-                    <%
-                        if(flag!=0){
 
-                            int priv = (int)session.getAttribute("priv_lvl");
-                            if(priv == 2)  {
-                    %> 
-                    <a href="/admin/deletemov/${movie.id}" style="font-size: 12px;"><i class="fa fa-remove" style="color:red"></i> Delete this movie</a>
-                    <%
-                            }
-                        }
-                    %> 
-                </div>
-            </div>
-            </c:forEach>
-        </div>
-        <div class="input-group">
-            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></span>
-            <input type="text" class="form-control" id="datepicker" aria-describedby="basic-addon1"/>
-        </div>
+    <div class="container movie-details">
+        <h4> ${movie_name} : Reviews</h4>
+    </div>
+    <div class="container">
+
+    </div>
+    <div class="container">
+        <table class="table">
+            <tbody>
+                <c:forEach items="${all_feed}" var="feed">
+                <tr>
+                    <td class="col-md-4"> <strong>${feed.profile.f_name} ${feed.profile.l_name}</td>
+                    <td class="col-md-4">
+                        
+                        <c:choose> 
+                                <c:when test="${feed.rating ge 1 }">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                </c:when>
+                        </c:choose>
+                    
+                        <c:choose> 
+                                <c:when test="${feed.rating ge 2 }">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                </c:when>
+                        </c:choose>
+
+                        <c:choose> 
+                                <c:when test="${feed.rating ge 3 }">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                </c:when>
+                        </c:choose>
+
+                        <c:choose> 
+                                <c:when test="${feed.rating ge 4 }">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                </c:when>
+                        </c:choose>
+
+                        <c:choose> 
+                                <c:when test="${feed.rating ge 5 }">
+                                        <i class="fa fa-star" aria-hidden="true"></i>
+                                </c:when>
+                        </c:choose>                  
+                    
+                    
+                    </td>
+                    <td class="col-md-4"> ${feed.comments}</td>
+                
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
     </div>
     <footer class="footer navbar-inverse navbar-fixed-bottom">
     </footer>
@@ -230,7 +215,6 @@ ul li {
     <script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="js/site.js"></script>
 
 </body>
 </html>

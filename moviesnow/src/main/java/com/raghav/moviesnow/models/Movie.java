@@ -1,5 +1,7 @@
 package com.raghav.moviesnow.models;
 
+import java.util.List;
+
 import javax.persistence.*;
 
 @Entity // This tells Hibernate to make a table out of this class
@@ -14,6 +16,21 @@ public class Movie{
 
     private Double imdb_rating;
     private int runtime;
+
+    public int getId() {
+        return this.movie_id;
+    }
+
+    @Transient
+    private List<MovieTag> tags;
+
+    public List<MovieTag> getTags() {
+        return this.tags;
+    }
+
+    public void setTags(List<MovieTag> tags) {
+        this.tags = tags;
+    }
 
     public String getName() {
         return this.name;

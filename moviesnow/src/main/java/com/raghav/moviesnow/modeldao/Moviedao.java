@@ -15,4 +15,7 @@ public interface Moviedao extends CrudRepository<Movie, Integer> {
 
     @Query("SELECT m FROM Movie m where m.name = :inp")
     public Movie getObj(@Param("inp") String inp);
+
+    @Query("SELECT m FROM Movie m where m.movie_id = :inp")
+    public Movie getObj(@Param("inp") int inp);
 }

@@ -9,6 +9,10 @@ public class Profile{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    public int getId() {
+        return this.id;
+    }
+
     private String f_name;
     private String l_name;
     private String pass;

@@ -131,23 +131,14 @@ ul li {
     </nav>
     <div class="container">
         <h2>Create new Movie</h2>
-        <form action="/login" method="post" class="form-signin">
-            <%
-            String err = (String)session.getAttribute("error");
-            if(err!=null)  {
-            %>            
-            <div>
-                <div class="alert alert-danger">
-                    Invalid email or password, please try again
-                </div>
-            </div>
-            <%
-            }%>
+        <form action="/addmovie" method="post" class="form-signin">
             <div class="form-group">
                 <input name="name" type="text" class="form-control" placeholder="Movie Name"
                        autofocus="true"/>
-                <input name="descr" type="text" class="form-control" placeholder="Description"/>
+                <textarea rows = "5" cols="50" name="descr" type="text" class="form-control" placeholder="Description"></textarea>
                 <input name="tags" type="text" class="form-control" placeholder="Movie Tags(Space Separated)"/>
+                <input name="imdb_rating" type="number" step=".01" class="form-control" placeholder="IMDB Rating"/>
+                <input name="runtime" type="number" class="form-control" placeholder="Runtime(in minutes)"/>
                 <button class="btn btn-lg btn-primary btn-block" type="submit">Add Movie</button>
             </div>
         </form>

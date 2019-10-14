@@ -27,12 +27,26 @@ public class HomeController {
     @Autowired
     private Profiledao profiledao;
 
+    @Autowired
+    private Moviedao moviedao;
+
+    @Autowired
+    private MovieTagdao movietagdao;
+
+    @Autowired
+    private Feeddao feeddao;
+
     @GetMapping("/")
     public String index(HttpSession session, Model model) {
 
-       // System.out.println(flag);
         Object lflag=session.getAttribute("login_flag");
-        if(lflag==null) session.setAttribute("login_flag",0);
+        if( lflag == null)  session.setAttribute("login_flag", 0);
+        List<Movie> mvtmp = moviedao.getall();
+        for(int i=0;i<mvtmp.size();i++){
+
+            mvtmp.get(i).setTags(movietagdao.getall(mvtmp.get(i).getId()));
+        }
+        model.addAttribute("movies_all", mvtmp);
         return "index";
     }
 
@@ -135,7 +149,8 @@ public class HomeController {
 
     @PostMapping("/addmovie")
     public String addmoviepost(HttpSession session, Model model, @RequestParam("name") String name,
-    @RequestParam("descr") String descr,@RequestParam("tags") String tags) {
+    @RequestParam("descr") String descr,@RequestParam("tags") String tags, @RequestParam("imdb_rating") Double imdb_rating
+    ,@RequestParam("runtime") int runtime) {
 
         int priv=(int)session.getAttribute("priv_lvl");
 
@@ -145,7 +160,26 @@ public class HomeController {
             return "redirect:/";
         }
 
-        return "redirect:/addmovie";
+        String[] alltags = tags.split(" ", 0);
+        
+        Movie newmov = new Movie();
+        newmov.setName(name);
+        newmov.setDesc(descr);
+        newmov.setImdb_rating(imdb_rating);
+        newmov.setRuntime(runtime);
+
+        moviedao.save(newmov);
+        Movie curr = moviedao.getObj(name);
+
+        for(String tagg:alltags){
+
+            MovieTag newtag = new MovieTag();
+            newtag.setTag_name(tagg);
+            newtag.setMovie(curr);
+            movietagdao.save(newtag);
+        }
+
+        return "redirect:/";
     }
 
     @GetMapping("/addmovie")
@@ -218,5 +252,76 @@ public class HomeController {
 
         profiledao.revoke_priv(user);
         return "redirect:/admins";
+    }
+
+    @GetMapping("/admin/deletemov/{movie_id}")
+    public String revokeaccess(HttpSession session, Model model, @PathVariable("movie_id") int id) {
+
+        int lflag=(int)session.getAttribute("login_flag");
+        if( lflag == 0 ){
+
+            session.setAttribute("message", "You are not logged in");
+            return "redirect:/";
+        }
+        int priv=(int)session.getAttribute("priv_lvl");
+
+        if( priv != 2 ){
+
+            session.setAttribute("message", "You do not have access to this page");
+            return "redirect:/";
+        }
+
+        if (!moviedao.existsById(id)){
+
+            session.setAttribute("message", "Unknown movie Specified");
+            return "redirect:/";
+        }
+
+        moviedao.deleteById(id);
+        return "redirect:/";
+    }
+
+    @GetMapping("/addfeedback/{movie_id}")
+    public String addfeed(HttpSession session, Model model, @PathVariable("movie_id") int movie_id) {
+
+        model.addAttribute("movie_id", movie_id);
+        return "addfeed";
+    }
+
+    @PostMapping("/addfeedback")
+    public String addfeedpost(HttpSession session, Model model, @RequestParam("stars") int stars,
+    @RequestParam("descr") String descr, @RequestParam("movie_id") int movie_id) {
+
+        Feedback newfeed = new Feedback();
+        newfeed.setComments(descr);
+        newfeed.setRating(stars);
+        newfeed.setProfile(profiledao.getprofile((String)session.getAttribute("user_email")));
+        newfeed.setMovie(moviedao.getObj(movie_id));
+
+        feeddao.save(newfeed);
+       
+        return "redirect:/feeds/"+movie_id;
+    }
+
+    @GetMapping("/feeds/{movie_id}")
+    public String showfeed(HttpSession session, Model model, @PathVariable("movie_id") int movie_id) {
+
+        if(!moviedao.existsById(movie_id)){
+
+            session.setAttribute("message","No such movie exists");
+            return "redirect:/";
+        }
+
+        Movie currmv = moviedao.getObj(movie_id);
+        model.addAttribute("movie_name", currmv.getName());
+        List<Feedback> ls = feeddao.getreviews(movie_id);
+
+        for(int i=0;i<ls.size();i++){
+
+            ls.get(i).setProfile(profiledao.getbyid(ls.get(i).getProfile().getId()));
+        }
+        model.addAttribute("all_feed", ls);
+
+        return "feed";
     }
 }

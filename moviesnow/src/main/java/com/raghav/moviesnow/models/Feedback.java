@@ -11,6 +11,10 @@ public class Feedback{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int feed_id;
 
+    public int getId() {
+        return this.feed_id;
+    }
+
     private int rating;
     private String comments;
 
@@ -35,8 +39,24 @@ public class Feedback{
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Profile profile;
 
+    public Profile getProfile() {
+        return this.profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "movie_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Movie movie;
+
+    public Movie getMovie() {
+        return this.movie;
+    }
+
+    public void setMovie(Movie movie) {
+        this.movie = movie;
+    }
 }

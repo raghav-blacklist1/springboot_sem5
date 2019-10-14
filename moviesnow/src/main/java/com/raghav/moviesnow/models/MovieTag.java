@@ -24,4 +24,12 @@ public class MovieTag{
     @JoinColumn(name = "movie_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Movie movie;
+
+    public Movie getMovie() {
+        return this.movie;
+    }
+
+    public void setMovie(Movie movie) {
+        this.movie = movie;
+    }
 }

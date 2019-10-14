@@ -18,6 +18,9 @@ public interface Profiledao extends CrudRepository<Profile, Integer> {
     @Query("SELECT f_name FROM Profile where email = :inp")
     public String username(@Param("inp") String inp);
 
+    @Query("SELECT p FROM Profile p where p.email = :inp")
+    public Profile getprofile(@Param("inp") String inp);
+
     @Query("SELECT pass FROM Profile where email = :inp")
     public String getpass(@Param("inp") String inp);
 
@@ -36,4 +39,7 @@ public interface Profiledao extends CrudRepository<Profile, Integer> {
     @Modifying
     @Query("UPDATE Profile set priv_lvl=1 where email= :inp")
     public void revoke_priv(@Param("inp") String inp);
+
+    @Query("SELECT p FROM Profile p where id = :inp")
+    public Profile getbyid(@Param("inp") int inp);
 }
