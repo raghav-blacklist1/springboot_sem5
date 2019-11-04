@@ -157,15 +157,20 @@ ul li {
     %>
 
     <div>
-        <div class="container main-content">
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-info">
-                    <h5>Seats already booked: 
-                            <c:forEach items="${all_book}" var="book"> ${book.seat_no} </c:forEach>
-                    </h5>
-                </li>
-            </ul>
-        </div>
+        <c:choose> 
+            <c:when test="${all_book.size() ge 1 }">    
+                              
+                <div class="container main-content">
+                    <ul class="list-group">
+                        <li class="list-group-item list-group-item-info">
+                            <h5>Seats already booked: 
+                                    <c:forEach items="${all_book}" var="book"> ${book.seat_no} </c:forEach>
+                            </h5>
+                        </li>
+                    </ul>
+                </div>
+            </c:when>
+        </c:choose>
     </div>
     
     <div class="container">
@@ -173,7 +178,7 @@ ul li {
             <div class="input-group">
                     <input type="hidden" name="slot_id" value="${slot_id}">
                     <input type="text" name="seats" placeholder="Enter seat numbers to book(comma-separated)" class="form-control" aria-describedby="basic-addon1"/>
-                    <span class="input-group-addon" id="basic-addon1"><span onclick="myform.submit()" class="glyphicon glyphicon-search" aria-hidden="true"></span></span>
+                    <span class="input-group-addon" id="basic-addon1"><span onclick="myform.submit()" class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></span>
             </div>
             </form>
     </div>
